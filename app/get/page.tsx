@@ -7,7 +7,7 @@ export const metadata: Metadata = {
     "Install gtme: Homebrew tap, a checksummed release tarball, or build from source with ./install.sh. Nothing pipes a download into a shell.",
 };
 
-const RELEASES = "https://github.com/elegant-atomics/gtme/releases";
+const RELEASES = "https://github.com/gtme-run/gtme/releases";
 const LATEST = `${RELEASES}/latest`;
 
 export default function GetPage() {
@@ -22,11 +22,11 @@ export default function GetPage() {
 
       <h2>1. Homebrew</h2>
       <pre>
-        <code>brew install elegant-atomics/tap/gtme</code>
+        <code>brew install gtme-run/tap/gtme</code>
       </pre>
       <p>
         The{" "}
-        <a href="https://github.com/elegant-atomics/homebrew-tap">tap</a>{" "}
+        <a href="https://github.com/gtme-run/homebrew-tap">tap</a>{" "}
         installs the prebuilt binary from the{" "}
         <a href={RELEASES}>releases page</a>, verified against the{" "}
         <code>checksums.txt</code> published beside it.
@@ -56,7 +56,7 @@ mv gtme ~/.local/bin/        # or anywhere on your PATH`}</code>
       <h2>3. From source</h2>
       <p>Requires Go 1.24 or newer.</p>
       <pre>
-        <code>{`git clone https://github.com/elegant-atomics/gtme && cd gtme
+        <code>{`git clone https://github.com/gtme-run/gtme && cd gtme
 ./install.sh        # builds gtme, installs it to ~/.local/bin, runs gtme init`}</code>
       </pre>
       <p>

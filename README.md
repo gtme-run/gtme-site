@@ -1,6 +1,6 @@
 # gtme-site
 
-The website for [gtme](https://github.com/elegant-atomics/gtme), served at
+The website for [gtme](https://github.com/gtme-run/gtme), served at
 [gtme.run](https://gtme.run).
 
 It is a small Next.js (App Router) site with three pages and one raw file:
@@ -13,7 +13,7 @@ It is a small Next.js (App Router) site with three pages and one raw file:
 | `/start.md` | The raw `START.md`, byte for byte, via a rewrite to GitHub         |
 
 `/start` and `/start.md` never hold a copy of the markdown. `/start.md` is a
-rewrite to `raw.githubusercontent.com/elegant-atomics/gtme/main/START.md`;
+rewrite to `raw.githubusercontent.com/gtme-run/gtme/main/START.md`;
 `/start` fetches the same URL server-side with a 5-minute revalidation
 window and renders it with `react-markdown` + `remark-gfm`. Editing
 `START.md` in the gtme repo updates both.

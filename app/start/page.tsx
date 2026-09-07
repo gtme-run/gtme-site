@@ -9,9 +9,9 @@ export const metadata: Metadata = {
 };
 
 const START_RAW =
-  "https://raw.githubusercontent.com/elegant-atomics/gtme/main/START.md";
-const START_HTML = "https://github.com/elegant-atomics/gtme/blob/main/START.md";
-const REPO_BLOB = "https://github.com/elegant-atomics/gtme/blob/main/";
+  "https://raw.githubusercontent.com/gtme-run/gtme/main/START.md";
+const START_HTML = "https://github.com/gtme-run/gtme/blob/main/START.md";
+const REPO_BLOB = "https://github.com/gtme-run/gtme/blob/main/";
 
 // Rendered from the repo's START.md at request time; revalidated every 5 minutes.
 export const revalidate = 300;

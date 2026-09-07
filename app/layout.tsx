@@ -36,19 +36,19 @@ export default function RootLayout({
             <span className="sep" aria-hidden="true">
               ·
             </span>
-            <a href="https://github.com/elegant-atomics/gtme">GitHub</a>
+            <a href="https://github.com/gtme-run/gtme">GitHub</a>
           </nav>
         </header>
         <main className="site-main">{children}</main>
         <footer className="site-footer">
-          <a href="https://github.com/elegant-atomics/gtme/blob/main/LICENSE">
+          <a href="https://github.com/gtme-run/gtme/blob/main/LICENSE">
             Apache-2.0
           </a>
           <span className="sep" aria-hidden="true">
             ·
           </span>
-          <a href="https://github.com/elegant-atomics/gtme">
-            github.com/elegant-atomics/gtme
+          <a href="https://github.com/gtme-run/gtme">
+            github.com/gtme-run/gtme
           </a>
         </footer>
       </body>

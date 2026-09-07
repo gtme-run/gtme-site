@@ -67,7 +67,7 @@ export default function HomePage() {
 
       <h2>Install</h2>
       <pre>
-        <code>brew install elegant-atomics/tap/gtme     # macOS and Linux, arm64 and amd64</code>
+        <code>brew install gtme-run/tap/gtme     # macOS and Linux, arm64 and amd64</code>
       </pre>
       <p className="small muted">
         A single static binary. No daemon, no hosted anything, no login.{" "}

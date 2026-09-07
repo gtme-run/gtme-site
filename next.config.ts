@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const START_RAW =
-  "https://raw.githubusercontent.com/elegant-atomics/gtme/main/START.md";
+  "https://raw.githubusercontent.com/gtme-run/gtme/main/START.md";
 
 const nextConfig: NextConfig = {
   async rewrites() {
