@@ -4,7 +4,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Get gtme",
   description:
-    "Install gtme: Homebrew tap, a checksummed release tarball, or build from source with ./install.sh. Nothing pipes a download into a shell.",
+    "Install gtme: Homebrew tap, a checksummed release tarball, go install, or build from a checkout with ./install.sh. Nothing pipes a download into a shell.",
 };
 
 const RELEASES = "https://github.com/gtme-run/gtme/releases";
@@ -53,7 +53,17 @@ tar -xzf gtme_<version>_<os>_<arch>.tar.gz
 mv gtme ~/.local/bin/        # or anywhere on your PATH`}</code>
       </pre>
 
-      <h2>3. From source</h2>
+      <h2>3. Go</h2>
+      <p>
+        With Go 1.24 or newer, straight from the module. It builds the
+        latest tagged release and reports that tag from{" "}
+        <code>gtme version</code>.
+      </p>
+      <pre>
+        <code>go install github.com/gtme-run/gtme/cmd/gtme@latest</code>
+      </pre>
+
+      <h2>4. From a checkout</h2>
       <p>Requires Go 1.24 or newer.</p>
       <pre>
         <code>{`git clone https://github.com/gtme-run/gtme && cd gtme
