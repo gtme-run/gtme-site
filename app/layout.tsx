@@ -5,11 +5,11 @@ import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL("https://gtme.run"),
   title: {
-    default: "gtme — GTM as code",
+    default: "gtme: GTM as code",
     template: "%s · gtme",
   },
   description:
-    "gtme is an open-source CLI for engineers who do GTM. Campaigns are YAML pipelines, the ledger is SQLite, every run ends in a receipt.",
+    "A CLI for GTM data pipelines. A YAML file describes a campaign, and an append-only ledger makes re-runs cheaper and never delivers twice.",
 };
 
 export default function RootLayout({
@@ -25,14 +25,6 @@ export default function RootLayout({
             <Link href="/" className="brand">
               gtme
             </Link>
-            <span className="sep" aria-hidden="true">
-              ·
-            </span>
-            <Link href="/get">get</Link>
-            <span className="sep" aria-hidden="true">
-              ·
-            </span>
-            <Link href="/start">start</Link>
             <span className="sep" aria-hidden="true">
               ·
             </span>

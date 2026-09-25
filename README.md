@@ -3,21 +3,21 @@
 The website for [gtme](https://github.com/gtme-run/gtme), served at
 [gtme.run](https://gtme.run).
 
-It is a small Next.js (App Router) site with a few pages and one raw file:
+It is a small Next.js (App Router) site with one page, the docs, two
+redirects, and one raw file:
 
-| Path        | What it is                                                        |
-|-------------|-------------------------------------------------------------------|
-| `/`         | The pitch, the YAML example and receipt, the install line          |
-| `/get`      | Install instructions: Homebrew, release tarball, build from source |
-| `/start`    | The repo's `START.md`, fetched at request time and rendered        |
-| `/start.md` | The raw `START.md`, byte for byte, via a rewrite to GitHub         |
-| `/docs/...` | The repo's `docs/` tree, fetched at request time and rendered      |
+| Path        | What it is                                                           |
+|-------------|----------------------------------------------------------------------|
+| `/`         | What gtme is, the YAML example and its receipt, the install line      |
+| `/docs/...` | The repo's `docs/` tree, fetched at request time and rendered         |
+| `/start.md` | The raw `START.md`, byte for byte, via a rewrite to GitHub            |
+| `/get`      | Permanent redirect (308) to `/docs/start/install`                     |
+| `/start`    | Permanent redirect (308) to `/docs/start`                             |
 
-`/start` and `/start.md` never hold a copy of the markdown. `/start.md` is a
-rewrite to `raw.githubusercontent.com/gtme-run/gtme/main/START.md`;
-`/start` fetches the same URL server-side with a 5-minute revalidation
-window and renders it with `react-markdown` + `remark-gfm`. Editing
-`START.md` in the gtme repo updates both.
+`/start.md` never holds a copy of the markdown. It is a rewrite to
+`raw.githubusercontent.com/gtme-run/gtme/main/START.md`, so editing
+`START.md` in the gtme repo updates it. It's the agent's entry point and
+its URL doesn't change.
 
 `/docs` works the same way. It fetches `docs/<path>.md` and
 `docs/_outline.yaml` from raw GitHub (ref `main`, or `DOCS_REF`) with a
@@ -44,7 +44,8 @@ from jsDelivr in the browser, only on pages that have a diagram. Styling is one 
 ## Deploy
 
 The site deploys to Vercel from the `main` branch. The rewrite for
-`/start.md` lives in `next.config.ts`.
+`/start.md` and the redirects for `/get` and `/start` live in
+`next.config.ts`.
 
 ## License
 
