@@ -24,6 +24,8 @@ export type DocFrontmatter = {
   name?: string;
   description?: string;
   order?: number;
+  for?: string; // who the page is for, and when
+  learn?: string[]; // 2 to 4 short items
   links?: DocLink[];
 };
 

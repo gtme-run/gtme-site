@@ -342,6 +342,17 @@ body:has(.docs) .site-footer {
   cursor: help;
 }
 
+.docs-learn {
+  margin: 0 0 2rem;
+  padding-bottom: 0.5rem;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.docs-learn ul {
+  padding-left: 1.25rem;
+}
+
 .docs-related {
   margin-top: 2.5rem;
   border-top: 1px solid var(--border);

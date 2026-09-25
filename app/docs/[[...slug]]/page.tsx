@@ -179,6 +179,34 @@ function Related({ site, doc }: { site: Site; doc: Doc }) {
   );
 }
 
+// Backticks in a learn item are inline code; nothing else is parsed.
+function inlineCode(text: string) {
+  return text
+    .split("`")
+    .map((part, i) => (i % 2 === 1 ? <code key={i}>{part}</code> : part));
+}
+
+function WhatYoullLearn({ doc }: { doc: Doc }) {
+  const { for: audience, learn } = doc.data;
+  const items = Array.isArray(learn)
+    ? learn.filter((x): x is string => typeof x === "string" && x.trim() !== "")
+    : [];
+  if (typeof audience !== "string" || !audience.trim() || items.length === 0) {
+    return null;
+  }
+  return (
+    <section className="docs-learn" aria-labelledby="learn">
+      <h2 id="learn">What you&apos;ll learn</h2>
+      <p className="muted">{inlineCode(audience)}</p>
+      <ul>
+        {items.map((item, i) => (
+          <li key={i}>{inlineCode(item)}</li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
 function Unavailable() {
   return (
     <article>
@@ -226,6 +254,7 @@ export default async function DocsPage({ params }: Props) {
         {r.doc.data.description ? (
           <p className="lede">{r.doc.data.description}</p>
         ) : null}
+        <WhatYoullLearn doc={r.doc} />
         <DocsMarkdown unwritten={unwrittenRoutes(site)}>{body}</DocsMarkdown>
         <Related site={site} doc={r.doc} />
         <PrevNext site={site} r={r} />
