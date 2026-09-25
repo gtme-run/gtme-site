@@ -4,6 +4,12 @@ const START_RAW =
   "https://raw.githubusercontent.com/gtme-run/gtme/main/START.md";
 
 const nextConfig: NextConfig = {
+  async redirects() {
+    return [
+      { source: "/get", destination: "/docs/start/install", permanent: true },
+      { source: "/start", destination: "/docs/start", permanent: true },
+    ];
+  },
   async rewrites() {
     return {
       // beforeFiles so the rewrite wins over any static file or route.

@@ -2,30 +2,30 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "gtme — GTM as code",
+  title: "gtme: GTM as code",
   description:
-    "Built for engineers who do GTM. A CLI, a ledger you can query, YAML you can diff, and receipts for every dollar.",
+    "A CLI for GTM data pipelines. A YAML file describes a campaign, and an append-only ledger makes re-runs cheaper and never delivers twice.",
 };
 
 const PIPELINE = `name: q3-outbound
 source:
-  use: apollo/search              # a vendor adapter that is ~150 lines of YAML
+  use: apollo/search              # an adapter: a vendor's API, described in YAML
   with: { query: "vp marketing, saas", limit: 200 }
 steps:
   - id: fit
-    use: ai/filter                # AI judgment behind the same contract as any step
+    use: ai/filter                # an AI judge, under the same contract as any step
     uses: [full_name, title, company_domain]
-    with: { prompt: Keep people who own outbound tooling decisions. }
+    with: { template: Keep people who own outbound tooling decisions. }
   - id: lines
     use: ai/compose
     when: fit.passed
     uses: [full_name, title, company_name]
-    with: { prompt: Write first_line and ps_line for a short, honest intro. }
-  - id: send                      # delivery is a step like any other — put it anywhere, use several
+    with: { template: Write first_line and ps_line for a short, honest intro. }
+  - id: send                      # delivery is a step too; a pipeline can have several
     use: instantly/add-to-campaign
     with: { campaign: "Q3 VP Marketing" }
     variables: { first_line: first_line, ps_line: ps_line }
-    idempotency: email            # re-runs deliver nothing twice, ever`;
+    idempotency: email            # a re-run never adds the same email twice`;
 
 const RECEIPT = `$ gtme run q3-outbound.yaml
 ...
@@ -41,14 +41,10 @@ export default function HomePage() {
     <article>
       <h1>GTM as code</h1>
       <p className="lede">
-        <strong>Built for engineers who do GTM — not the other way around.</strong>
-      </p>
-      <p>
-        Outbound tooling assumes you want a UI, credits, and someone else&apos;s
-        opinion of your workflow. If you&apos;d rather have a CLI, a ledger you
-        can query, YAML you can diff, and receipts for every dollar — this is
-        that. Campaigns are pipelines. Adapters are data. Judgment is
-        versioned. Everything replays.
+        gtme is a CLI for GTM data pipelines: a small YAML file describes a
+        campaign, the runner executes it against vendor adapters, and an
+        append-only ledger remembers every fact, so re-runs cost less and
+        nothing is delivered twice.
       </p>
 
       <pre>
@@ -60,9 +56,16 @@ export default function HomePage() {
       </pre>
 
       <p>
-        Run it again Monday with fresh data: overlapping records cache-skip,
-        the receipt shows dollars <em>avoided</em>, and nobody gets delivered
-        twice.
+        This campaign searches Apollo for 200 people, has an AI judge keep
+        the 74 who own outbound tooling, writes two lines for each of them,
+        and adds them to an Instantly campaign. The receipt has one row per
+        step, with what went in, what came out, and what it cost.
+      </p>
+      <p>
+        Run it again Monday with fresh data. People the ledger already has
+        answers for skip the steps that produced them, and the receipt shows
+        those dollars as avoided. Anyone already in the campaign stays out
+        of it, because <code>idempotency: email</code> holds across runs.
       </p>
 
       <h2>Install</h2>
@@ -70,16 +73,15 @@ export default function HomePage() {
         <code>brew install gtme-run/tap/gtme     # macOS and Linux, arm64 and amd64</code>
       </pre>
       <p className="small muted">
-        A single static binary. No daemon, no hosted anything, no login.{" "}
-        <Link href="/get">Other ways to install.</Link>
+        The formula installs one static binary. Nothing runs in the
+        background, and there&apos;s no account to create.{" "}
+        <Link href="/docs/start/install">Install</Link> covers the release
+        tarball, <code>go install</code>, and building from a checkout.
       </p>
 
       <p className="cta">
-        <Link href="/start">Start here →</Link>
-        <br />
-        <span className="small muted">
-          Four doors, each one pipeline file, each ending in a receipt.
-        </span>
+        <Link href="/docs/start">Start</Link> has four ways to begin, sorted
+        by what you have on hand. The first needs no keys and spends nothing.
       </p>
     </article>
   );
