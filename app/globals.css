@@ -246,3 +246,138 @@ blockquote {
 img {
   max-width: 100%;
 }
+
+/* Docs: sidebar + page. The docs pages widen the shared column to fit the nav. */
+
+body:has(.docs) .site-header,
+body:has(.docs) .site-main,
+body:has(.docs) .site-footer {
+  max-width: calc(72ch + 16rem);
+}
+
+.docs {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2.5rem;
+}
+
+.docs-page {
+  min-width: 0;
+}
+
+.docs-nav {
+  font-size: 0.9rem;
+  line-height: 1.45;
+  border-top: 1px solid var(--border);
+  padding-top: 1.25rem;
+}
+
+@media (min-width: 60rem) {
+  .docs {
+    grid-template-columns: 13rem minmax(0, 1fr);
+  }
+  .docs-nav {
+    grid-column: 1;
+    grid-row: 1;
+    border-top: 0;
+    padding-top: 0.25rem;
+    position: sticky;
+    top: 1rem;
+    align-self: start;
+    max-height: calc(100vh - 2rem);
+    overflow-y: auto;
+  }
+  .docs-page {
+    grid-column: 2;
+  }
+}
+
+.docs-nav ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0 0 1.25rem;
+}
+
+.docs-nav ul ul {
+  padding-left: 0.85rem;
+  margin: 0.2rem 0 0;
+}
+
+.docs-nav li + li {
+  margin-top: 0.2rem;
+}
+
+.docs-nav a {
+  color: var(--fg);
+}
+
+.docs-nav a:hover,
+.docs-nav a:focus-visible {
+  color: var(--accent-hover);
+}
+
+.docs-nav a.current {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.docs-nav .planned {
+  color: var(--muted);
+}
+
+.docs-nav-home {
+  margin-bottom: 1rem;
+}
+
+.docs-nav-title {
+  margin: 0 0 0.35rem;
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.unwritten {
+  color: var(--muted);
+  cursor: help;
+}
+
+.docs-related {
+  margin-top: 2.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.docs-related ul {
+  padding-left: 1.25rem;
+}
+
+.docs-prevnext {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border);
+}
+
+.docs-prevnext span:last-child {
+  text-align: right;
+}
+
+.mermaid-diagram {
+  margin: 0 0 1.25rem;
+  overflow-x: auto;
+}
+
+.mermaid-diagram svg {
+  max-width: 100%;
+  height: auto;
+}
+
+h1[id],
+h2[id],
+h3[id],
+h4[id],
+.anchor[id] {
+  scroll-margin-top: 1rem;
+}

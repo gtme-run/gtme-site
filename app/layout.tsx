@@ -36,6 +36,10 @@ export default function RootLayout({
             <span className="sep" aria-hidden="true">
               ·
             </span>
+            <Link href="/docs">docs</Link>
+            <span className="sep" aria-hidden="true">
+              ·
+            </span>
             <a href="https://github.com/gtme-run/gtme">GitHub</a>
           </nav>
         </header>
