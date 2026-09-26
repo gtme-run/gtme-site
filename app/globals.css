@@ -639,3 +639,82 @@ h4[id],
   fill: var(--accent);
   font-weight: 600;
 }
+
+/* Connectors: the catalog and one page per connector. */
+
+.registry .crumbs {
+  margin: 0 0 0.5rem;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.registry .crumbs a {
+  color: var(--muted);
+}
+
+.registry .crumbs a:hover {
+  color: var(--accent);
+}
+
+.catalog-group {
+  margin-bottom: 1.5rem;
+}
+
+.catalog-group h3 {
+  margin-top: 1.5rem;
+}
+
+table.catalog td:first-child {
+  min-width: 14rem;
+}
+
+table.catalog .small {
+  margin-top: 0.15rem;
+}
+
+.tier {
+  display: inline-block;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  padding: 0 0.45em;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.tier-verified,
+.tier-built-in {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+table.facts {
+  font-size: 0.95rem;
+  margin: 1.25rem 0 1.5rem;
+}
+
+table.facts th {
+  width: 7rem;
+  color: var(--muted);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+table.facts td,
+table.facts th {
+  border-bottom: 1px solid var(--border);
+}
+
+table.config td:first-child {
+  white-space: nowrap;
+}
+
+.fields {
+  line-height: 1.9;
+}
+
+table.facts td code,
+table.facts td a {
+  overflow-wrap: anywhere;
+}
