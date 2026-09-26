@@ -42,6 +42,12 @@ the YAML, a row of a receipt, and a box in the figure all carry the same
 it: it rides the docs' rule that a thing is named in backticks exactly
 as the YAML and the receipt spell it.
 
+A page with exactly one whole-pipeline block (the three pipeline start
+pages) keeps that block in a sticky rail on screens 90rem and wider, with
+the prose in a 66ch column beside it; the step the prose named last stays
+lit in the rail and the rail scrolls its YAML to it. Below 90rem the block
+sits in the flow where the markdown has it.
+
 ## Run locally
 
 ```sh

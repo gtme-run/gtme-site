@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { scanBindings, annotateYaml, annotateOutput, bindInline } from "./bindings.ts";
+import { scanBindings, annotateYaml, annotateOutput, bindInline, splitPipeline } from "./bindings.ts";
 
 const page = `
 # See it run
@@ -173,4 +173,37 @@ test("bindInline maps a backticked span to its step and token, or nothing", () =
   assert.deepEqual(bindInline("cache: 30d", b), { step: "reveal", token: "cache: 30d" });
   assert.equal(bindInline("gtme show", b), undefined);
   assert.equal(bindInline("$0.0100", b), undefined);
+});
+
+test("splitPipeline lifts the one whole-pipeline fence out of a page, or nothing", () => {
+  const body = `intro
+
+\`\`\`sh
+gtme run demo.yaml
+\`\`\`
+
+## The file
+
+\`\`\`yaml
+source:
+  use: csv/source
+steps:
+  - id: fit
+    use: ai/filter
+\`\`\`
+
+after text
+
+\`\`\`yaml
+    limit: 5
+\`\`\`
+`;
+  const s = splitPipeline(body)!;
+  assert.equal(s.before, "intro\n\n```sh\ngtme run demo.yaml\n```\n\n## The file\n\n");
+  assert.equal(s.fence, "```yaml\nsource:\n  use: csv/source\nsteps:\n  - id: fit\n    use: ai/filter\n```");
+  assert.equal(s.after, "\n\nafter text\n\n```yaml\n    limit: 5\n```\n");
+  // Two whole pipelines: no rail. None: no rail. Indented in a list: no rail.
+  assert.equal(splitPipeline(body + "\n" + s.fence + "\n"), null);
+  assert.equal(splitPipeline("just prose\n"), null);
+  assert.equal(splitPipeline("1. item\n\n    " + s.fence.replace(/\n/g, "\n    ") + "\n"), null);
 });

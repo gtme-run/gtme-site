@@ -11,6 +11,7 @@ import {
   annotateYaml,
   bindInline,
   scanBindings,
+  type Bindings as PageBindings,
   type Line,
 } from "@/lib/bindings";
 
@@ -111,13 +112,19 @@ export default function DocsMarkdown({
   children,
   canon = false,
   unwritten,
+  bindings: given,
+  bind = true,
 }: {
   children: string;
   canon?: boolean;
   // Outline routes with no file yet; links to them render as plain text.
   unwritten?: Set<string>;
+  // A page rendered in pieces passes the bindings of the whole page...
+  bindings?: PageBindings;
+  // ...and mounts the hover binder itself, once.
+  bind?: boolean;
 }) {
-  const bindings = scanBindings(children);
+  const bindings = given ?? scanBindings(children);
   return (
     <>
     <ReactMarkdown
@@ -187,7 +194,7 @@ export default function DocsMarkdown({
     >
       {children}
     </ReactMarkdown>
-    {bindings.steps.size > 0 ? <Bindings /> : null}
+    {bind && bindings.steps.size > 0 ? <Bindings /> : null}
     </>
   );
 }
