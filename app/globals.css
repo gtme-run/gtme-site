@@ -206,6 +206,18 @@ table {
   overflow-x: auto;
 }
 
+/* Markdown tables (components/DocsMarkdown): the scroll box takes the
+   overflow, so the table itself can be a real table at full width. */
+.table-scroll {
+  overflow-x: auto;
+  margin: 0 0 1.25rem;
+}
+
+.table-scroll > table {
+  display: table;
+  margin: 0;
+}
+
 th,
 td {
   text-align: left;
