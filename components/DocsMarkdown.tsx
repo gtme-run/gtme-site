@@ -166,6 +166,13 @@ export default function DocsMarkdown({
             alt={alt ?? ""}
           />
         ),
+        // A table fills the column and scrolls sideways inside its own box
+        // when it is wider, so every table on a page has one width.
+        table: ({ node: _node, ...p }) => (
+          <div className="table-scroll">
+            <table {...p} />
+          </div>
+        ),
         h2: ({ node, ...p }) => <Heading level={2} node={node as HastNode} {...p} />,
         h3: ({ node, ...p }) => <Heading level={3} node={node as HastNode} {...p} />,
         h4: ({ node, ...p }) => <Heading level={4} node={node as HastNode} {...p} />,
