@@ -26,12 +26,22 @@ pages that aren't written yet show as plain text. `/docs/spec` and
 `/docs/decisions` render the repo's `SPEC.md` and `DECISIONS.md`. The data
 layer is `lib/docs.ts`.
 
+A `yaml` code block that is a whole pipeline (`source:` with a `use:`,
+and `steps:` with an `id:` and `use:` each) gets a figure beside it:
+source at the top, one box per step, `when:` as a gate, the ledger as a
+bus alongside. It is generated from the block at render time
+(`lib/pipeline.ts`, `components/PipelineFigure.tsx`), so the markdown
+stays as it is and GitHub and MCP readers see the block alone. A block
+that doesn't parse as a whole pipeline (a fragment, or one trimmed with
+`...`) gets no figure.
+
 ## Run locally
 
 ```sh
 npm install
 npm run dev        # http://localhost:3000
 npm run build      # must pass cleanly before pushing
+npm test           # the pipeline figure's parser and layout
 
 # preview docs from a local gtme checkout instead of GitHub
 DOCS_DIR=../gtme/docs npm run dev   # http://localhost:3000/docs
