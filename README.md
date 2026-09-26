@@ -48,6 +48,16 @@ the prose in a 66ch column beside it; the step the prose named last stays
 lit in the rail and the rail scrolls its YAML to it. Below 90rem the block
 sits in the flow where the markdown has it.
 
+`docs/glossary.md` carries every project term in its frontmatter
+(`entries:`, written by the docs generator). A term named in code font
+on a page, or linked to the page that defines it, gets a hover card with
+its one-sentence definition and a link to that page (`lib/glossary.ts`,
+`components/TermCards.tsx`). A term gets no card on its own page or on
+the glossary. The outline's `pages:` list (the glossary) renders under
+Overview in the sidebar, and a reference page's children (the CLI verbs,
+the adapter catalog) show there only while the reader is on that page or
+one of them.
+
 ## Run locally
 
 ```sh

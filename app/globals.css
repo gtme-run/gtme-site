@@ -329,6 +329,24 @@ body:has(.docs) .site-footer {
   margin-bottom: 1rem;
 }
 
+.docs-nav-home:has(+ ul) {
+  margin-bottom: 0.2rem;
+}
+
+/* A sidebar entry with children (the reference nodes) folds them away
+   unless the reader is inside it. */
+.docs-nav li.folder > a::after,
+.docs-nav li.folder > span::after {
+  content: "\25B8";
+  margin-left: 0.35em;
+  font-size: 0.85em;
+  color: var(--muted);
+}
+
+.docs-nav li.folder.open > a::after {
+  content: "\25BE";
+}
+
 .docs-nav-title {
   margin: 0 0 0.35rem;
   font-weight: 600;
@@ -717,4 +735,48 @@ table.config td:first-child {
 table.facts td code,
 table.facts td a {
   overflow-wrap: anywhere;
+}
+
+/* Glossary hover cards: a term in code font, or a link to the page that
+   defines it, shows its one-sentence definition and a link to that page
+   (components/TermCards). */
+
+.docs-page .term {
+  text-decoration: underline dotted var(--muted);
+  text-underline-offset: 0.2em;
+}
+
+.docs-page code.term {
+  cursor: help;
+}
+
+.docs-page a.term:hover,
+.docs-page a.term:focus-visible {
+  text-decoration: underline solid;
+}
+
+.term-card {
+  position: fixed;
+  z-index: 20;
+  width: min(24rem, calc(100vw - 1.5rem));
+  padding: 0.65rem 0.85rem;
+  background: var(--bg);
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.14);
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+.term-card[hidden] {
+  display: none;
+}
+
+.term-card p {
+  margin: 0 0 0.4rem;
+}
+
+.term-card a {
+  font-weight: 600;
 }

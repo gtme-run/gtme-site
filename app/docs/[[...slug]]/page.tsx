@@ -3,9 +3,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import DocsMarkdown from "@/components/DocsMarkdown";
 import Bindings from "@/components/Bindings";
+import TermCards from "@/components/TermCards";
 import { scanBindings, splitPipeline } from "@/lib/bindings";
 import {
   getSite,
+  glossaryOf,
   readRepoText,
   writtenPages,
   type Doc,
@@ -101,18 +103,25 @@ function Sidebar({ site, current }: { site: Site; current: string }) {
       <Link href={href(route)}>{label}</Link>
     );
 
-  const pageItem = (p: NavPage) => (
-    <li key={p.route}>
-      {p.doc ? item(p.route, p.label) : <span className="planned">{p.label}</span>}
-      {p.children.length > 0 ? <ul>{p.children.map(pageItem)}</ul> : null}
-    </li>
-  );
+  // A page's children (the reference nodes) show only while the reader is
+  // on that page or one of them, so the adapter catalog's 20 rows stay
+  // folded from everywhere else.
+  const pageItem = (p: NavPage) => {
+    const open = p.children.length > 0 && (current === p.route || current.startsWith(p.route + "/"));
+    return (
+      <li key={p.route} className={p.children.length > 0 ? (open ? "folder open" : "folder") : undefined}>
+        {p.doc ? item(p.route, p.label) : <span className="planned">{p.label}</span>}
+        {open ? <ul>{p.children.map(pageItem)}</ul> : null}
+      </li>
+    );
+  };
 
   return (
     <nav aria-label="Docs" className="docs-nav">
       <p className="docs-nav-home">
         {site.root ? item("", "Overview") : <span className="planned">Overview</span>}
       </p>
+      {site.pages.length > 0 ? <ul>{site.pages.map(pageItem)}</ul> : null}
       {site.collections.map((c) => (
         <div key={c.key} className="docs-nav-group">
           <p className="docs-nav-title">
@@ -250,6 +259,7 @@ export default async function DocsPage({ params }: Props) {
 
   const { title, body } = splitTitle(r.doc.content);
   const unwritten = unwrittenRoutes(site);
+  const terms = glossaryOf(site);
   // A page about one pipeline file keeps that file in a rail on wide
   // screens. The aside sits between the halves of the body, so on a phone
   // it is exactly where the block was.
@@ -266,27 +276,30 @@ export default async function DocsPage({ params }: Props) {
         {split ? (
           <>
             <div className="docs-body">
-              <DocsMarkdown unwritten={unwritten} bindings={bindings} bind={false}>
+              <DocsMarkdown unwritten={unwritten} bindings={bindings} bind={false} terms={terms} route={route}>
                 {split.before}
               </DocsMarkdown>
             </div>
             <aside className="docs-rail" aria-label="The pipeline this page is about">
-              <DocsMarkdown unwritten={unwritten} bindings={bindings} bind={false}>
+              <DocsMarkdown unwritten={unwritten} bindings={bindings} bind={false} terms={terms} route={route}>
                 {split.fence}
               </DocsMarkdown>
             </aside>
             <div className="docs-body">
-              <DocsMarkdown unwritten={unwritten} bindings={bindings} bind={false}>
+              <DocsMarkdown unwritten={unwritten} bindings={bindings} bind={false} terms={terms} route={route}>
                 {split.after}
               </DocsMarkdown>
             </div>
             <Bindings follow />
           </>
         ) : (
-          <DocsMarkdown unwritten={unwritten}>{body}</DocsMarkdown>
+          <DocsMarkdown unwritten={unwritten} terms={terms} route={route}>
+            {body}
+          </DocsMarkdown>
         )}
         <Related site={site} doc={r.doc} />
         <PrevNext site={site} r={r} />
+        {terms.size > 0 && route !== "glossary" ? <TermCards /> : null}
       </article>
       <Sidebar site={site} current={route} />
     </div>
