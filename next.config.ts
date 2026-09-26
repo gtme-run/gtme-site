@@ -8,6 +8,10 @@ const nextConfig: NextConfig = {
     return [
       { source: "/get", destination: "/docs/start/install", permanent: true },
       { source: "/start", destination: "/docs/start", permanent: true },
+      // The catalog's word is connector; its address is the registry (the
+      // index every entry comes from). Both spellings land in one place.
+      { source: "/connectors", destination: "/registry", permanent: true },
+      { source: "/connectors/:path*", destination: "/registry/:path*", permanent: true },
     ];
   },
   async rewrites() {

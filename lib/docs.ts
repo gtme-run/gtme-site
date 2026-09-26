@@ -55,7 +55,8 @@ function localDocsDir(): string | null {
 // Remote reads, memoized per instance for 5 minutes (misses included).
 const memo = new Map<string, { at: number; text: string | null }>();
 
-async function fetchRaw(url: string): Promise<string | null> {
+/** Fetch a public text file; null on 404 or any failure. Cached 5 minutes. */
+export async function fetchRaw(url: string): Promise<string | null> {
   const hit = memo.get(url);
   if (hit && Date.now() - hit.at < TTL_MS) return hit.text;
   let text: string | null;
