@@ -124,7 +124,7 @@ export default function PipelineFigure({
           const gy = e.gateY!;
           const g = 14;
           return (
-            <g key={e.to} className="pf-gate" data-step={e.to}>
+            <g key={e.to} className="pf-gate" data-step={e.to} data-token={`when: ${e.gate}`}>
               <line className="pf-edge" x1={e.x} y1={e.y1} x2={e.x} y2={gy - g} />
               <path
                 className="pf-diamond"
@@ -167,6 +167,8 @@ export default function PipelineFigure({
             </text>
             <text
               className="pf-use"
+              data-step={n.id}
+              data-token={`use: ${n.use}`}
               x={n.x + n.w / 2}
               y={n.y + 6 + 2 * LINE - 4}
               textAnchor="middle"
@@ -178,6 +180,8 @@ export default function PipelineFigure({
               <text
                 key={t}
                 className="pf-tag"
+                data-step={n.id}
+                data-token={t}
                 x={n.x + n.w / 2}
                 y={n.y + 6 + 2 * LINE + (i + 1) * (SMALL + 3) - 3}
                 textAnchor="middle"

@@ -500,3 +500,65 @@ h4[id],
   clip-path: inset(50%);
   white-space: nowrap;
 }
+
+/* Token bindings: hover a step or token anywhere on the page and every
+   other mention of it lights up. .lit is the step; .lit-token the exact
+   token. */
+
+.docs-page [data-step],
+.docs-page [data-token] {
+  transition: background-color 120ms ease, box-shadow 120ms ease;
+}
+
+.docs-page p code[data-step],
+.docs-page li code[data-step],
+.docs-page p code[data-token],
+.docs-page li code[data-token] {
+  text-decoration: underline dotted var(--border);
+  text-underline-offset: 0.2em;
+  cursor: default;
+}
+
+.docs-page code.lit {
+  background: color-mix(in srgb, var(--accent) 16%, var(--code-bg));
+  text-decoration-color: var(--accent);
+}
+
+.docs-page code.lit-token {
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.docs-page .ln {
+  display: block;
+  margin: 0 -1rem;
+  padding: 0 1rem;
+}
+
+.docs-page .ln.lit {
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+.docs-page .ln.lit-token {
+  background: color-mix(in srgb, var(--accent) 24%, transparent);
+}
+
+.pipeline-figure .pf-node.lit rect {
+  stroke: var(--accent);
+  stroke-width: 1.5;
+  fill: color-mix(in srgb, var(--accent) 10%, var(--code-bg));
+}
+
+.pipeline-figure .pf-tap.lit {
+  stroke: var(--accent);
+  stroke-width: 1.5;
+}
+
+.pipeline-figure .pf-gate.lit .pf-diamond {
+  fill: color-mix(in srgb, var(--accent) 18%, var(--bg));
+}
+
+.pipeline-figure .pf-gate.lit .pf-gate-label,
+.pipeline-figure text.lit-token {
+  fill: var(--accent);
+  font-weight: 600;
+}
