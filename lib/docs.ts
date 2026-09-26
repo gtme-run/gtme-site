@@ -12,6 +12,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import matter from "gray-matter";
 import yaml from "js-yaml";
+import { buildGlossary, type Glossary, type GlossaryEntry } from "./glossary.ts";
 
 const REPO_RAW = `https://raw.githubusercontent.com/gtme-run/gtme/${
   process.env.DOCS_REF ?? "main"
@@ -27,6 +28,7 @@ export type DocFrontmatter = {
   for?: string; // who the page is for, and when
   learn?: string[]; // 2 to 4 short items
   links?: DocLink[];
+  entries?: GlossaryEntry[]; // glossary.md only: one per term, written by the generator
 };
 
 export type Doc = {
@@ -44,6 +46,7 @@ export type OutlineEntry = {
 
 export type Outline = {
   collections: Record<string, OutlineEntry[]>;
+  pages?: OutlineEntry[]; // single pages outside the collections (the glossary)
   canon?: string[];
 };
 
@@ -108,7 +111,11 @@ export async function readOutline(): Promise<Outline | null> {
   if (raw === null) return null;
   const parsed = yaml.load(raw) as Partial<Outline> | undefined;
   if (!parsed || typeof parsed.collections !== "object") return null;
-  return { collections: parsed.collections ?? {}, canon: parsed.canon };
+  return {
+    collections: parsed.collections ?? {},
+    pages: Array.isArray(parsed.pages) ? parsed.pages : [],
+    canon: parsed.canon,
+  };
 }
 
 /** Where an image under /_assets/ is served from. */
@@ -154,6 +161,7 @@ export type NavCollection = {
 export type Site = {
   root: Doc | null; // docs/index.md
   collections: NavCollection[];
+  pages: NavPage[]; // outline `pages:`, shown under Overview
   byRoute: Map<string, NavPage | NavCollection>;
 };
 
@@ -223,7 +231,29 @@ export async function getSite(): Promise<Site | null> {
     }),
   );
 
-  return { root: await readDoc("index.md"), collections, byRoute };
+  const pages = await Promise.all(
+    (outline.pages ?? []).map(async (e, i) => {
+      const doc = await readPage(e.slug);
+      const page: NavPage = {
+        route: e.slug,
+        label: doc?.data.name ?? e.name ?? e.slug,
+        order: numberOr(doc?.data.order, i + 1),
+        doc,
+        children: [],
+      };
+      byRoute.set(e.slug, page);
+      return page;
+    }),
+  );
+
+  return { root: await readDoc("index.md"), collections, pages: pages.sort(byOrder), byRoute };
+}
+
+/** The glossary's terms, keyed for lookup; empty until glossary.md exists. */
+export function glossaryOf(site: Site): Glossary {
+  const entry = site.byRoute.get("glossary");
+  const entries = entry && "doc" in entry ? entry.doc?.data.entries : undefined;
+  return buildGlossary(entries, (route) => site.byRoute.get(route)?.label);
 }
 
 function numberOr(v: unknown, fallback: number): number {

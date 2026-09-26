@@ -5,6 +5,7 @@ import Mermaid from "./Mermaid";
 import PipelineFigure from "./PipelineFigure";
 import Bindings from "./Bindings";
 import { assetSrc } from "@/lib/docs";
+import { routeOf, termForCode, termForLink, type Glossary, type Term } from "@/lib/glossary";
 import { parsePipeline } from "@/lib/pipeline";
 import {
   annotateOutput,
@@ -102,10 +103,15 @@ function Heading({
   );
 }
 
-// "/concepts/ledger#x" -> "concepts/ledger"; null for anything not root-relative.
-function routeOf(href?: string): string | null {
-  if (!href || !href.startsWith("/") || href.startsWith("/_assets/")) return null;
-  return href.split(/[#?]/)[0].replace(/^\/+|\/+$/g, "");
+// A glossary term carries its card's contents on the element, so the
+// hover card (components/TermCards) needs no lookup of its own.
+function termAttrs(t: Term) {
+  return {
+    "data-term": t.term,
+    "data-def": t.definition,
+    "data-page": resolveHref("/" + t.route, false),
+    "data-page-label": t.pageLabel ?? t.route,
+  };
 }
 
 export default function DocsMarkdown({
@@ -114,11 +120,18 @@ export default function DocsMarkdown({
   unwritten,
   bindings: given,
   bind = true,
+  terms,
+  route,
 }: {
   children: string;
   canon?: boolean;
   // Outline routes with no file yet; links to them render as plain text.
   unwritten?: Set<string>;
+  // The glossary, when a term in code font or a link to a term's page
+  // should get a hover card; `route` is the page being rendered, so the
+  // term's own page gets none.
+  terms?: Glossary;
+  route?: string;
   // A page rendered in pieces passes the bindings of the whole page...
   bindings?: PageBindings;
   // ...and mounts the hover binder itself, once.
@@ -131,16 +144,21 @@ export default function DocsMarkdown({
       remarkPlugins={[remarkGfm]}
       rehypePlugins={[rehypeSlug]}
       components={{
-        a: ({ href, children }) => {
-          const route = routeOf(href);
-          if (route !== null && unwritten?.has(route)) {
+        a: ({ node, href, children }) => {
+          const target = routeOf(href);
+          if (target !== null && unwritten?.has(target)) {
             return (
               <span className="unwritten" title="not written yet">
                 {children}
               </span>
             );
           }
-          return <a href={resolveHref(href, canon)}>{children}</a>;
+          const t = terms ? termForLink(toText(node as HastNode), href, terms, route) : undefined;
+          return (
+            <a href={resolveHref(href, canon)} className={t ? "term" : undefined} {...(t ? termAttrs(t) : {})}>
+              {children}
+            </a>
+          );
         },
         img: ({ src, alt }) => (
           <img
@@ -155,9 +173,17 @@ export default function DocsMarkdown({
         // it. Block code has a trailing newline; inline code never does.
         code: ({ node, className, children }) => {
           const text = toText(node as HastNode);
-          const b = text.includes("\n") ? undefined : bindInline(text, bindings);
+          const inline = !text.includes("\n");
+          const b = inline ? bindInline(text, bindings) : undefined;
+          const t = inline && terms ? termForCode(text, terms, route) : undefined;
           return (
-            <code className={className} data-step={b?.step} data-token={b?.token}>
+            <code
+              className={[className, t ? "term" : undefined].filter(Boolean).join(" ") || undefined}
+              data-step={b?.step}
+              data-token={b?.token}
+              tabIndex={t ? 0 : undefined}
+              {...(t ? termAttrs(t) : {})}
+            >
               {children}
             </code>
           );
