@@ -3,8 +3,16 @@ import remarkGfm from "remark-gfm";
 import rehypeSlug from "rehype-slug";
 import Mermaid from "./Mermaid";
 import PipelineFigure from "./PipelineFigure";
+import Bindings from "./Bindings";
 import { assetSrc } from "@/lib/docs";
 import { parsePipeline } from "@/lib/pipeline";
+import {
+  annotateOutput,
+  annotateYaml,
+  bindInline,
+  scanBindings,
+  type Line,
+} from "@/lib/bindings";
 
 const REPO_BLOB = "https://github.com/gtme-run/gtme/blob/main/";
 
@@ -26,6 +34,26 @@ function toText(node?: HastNode): string {
 function hasLanguage(code: HastNode | undefined, lang: string): boolean {
   const cls = code?.properties?.className;
   return code?.tagName === "code" && Array.isArray(cls) && cls.includes(`language-${lang}`);
+}
+
+// A code block as lines, each carrying the step and token it is about, so
+// the hover binding can light one line of the YAML or one row of a receipt.
+function Lines({ lines, className }: { lines: Line[]; className?: string }) {
+  const last = lines.length - 1;
+  return (
+    <pre>
+      <code className={className}>
+        {lines.map((l, i) =>
+          i === last && l.text === "" ? null : (
+            <span key={i} className="ln" data-step={l.step} data-token={l.token}>
+              {l.text}
+              {"\n"}
+            </span>
+          ),
+        )}
+      </code>
+    </pre>
+  );
 }
 
 // A short stable id for a block, so two figures on one page get distinct
@@ -89,7 +117,9 @@ export default function DocsMarkdown({
   // Outline routes with no file yet; links to them render as plain text.
   unwritten?: Set<string>;
 }) {
+  const bindings = scanBindings(children);
   return (
+    <>
     <ReactMarkdown
       remarkPlugins={[remarkGfm]}
       rehypePlugins={[rehypeSlug]}
@@ -114,6 +144,17 @@ export default function DocsMarkdown({
         h2: ({ node, ...p }) => <Heading level={2} node={node as HastNode} {...p} />,
         h3: ({ node, ...p }) => <Heading level={3} node={node as HastNode} {...p} />,
         h4: ({ node, ...p }) => <Heading level={4} node={node as HastNode} {...p} />,
+        // Backticks in prose that name a step or a token on this page bind to
+        // it. Block code has a trailing newline; inline code never does.
+        code: ({ node, className, children }) => {
+          const text = toText(node as HastNode);
+          const b = text.includes("\n") ? undefined : bindInline(text, bindings);
+          return (
+            <code className={className} data-step={b?.step} data-token={b?.token}>
+              {children}
+            </code>
+          );
+        },
         pre: ({ node, children }) => {
           const code = (node as HastNode | undefined)?.children?.[0];
           if (hasLanguage(code, "mermaid")) {
@@ -127,11 +168,18 @@ export default function DocsMarkdown({
             if (pipeline) {
               return (
                 <div className="pipeline-block">
-                  <pre>{children}</pre>
+                  <Lines lines={annotateYaml(text)} className="language-yaml" />
                   <PipelineFigure pipeline={pipeline} id={blockId(text)} />
                 </div>
               );
             }
+          }
+          // A run's output (no language) binds its receipt rows and progress
+          // lines to the steps named on the page.
+          const cls = code?.properties?.className;
+          if (code?.tagName === "code" && !cls) {
+            const lines = annotateOutput(toText(code), bindings.steps);
+            if (lines) return <Lines lines={lines} />;
           }
           return <pre>{children}</pre>;
         },
@@ -139,5 +187,7 @@ export default function DocsMarkdown({
     >
       {children}
     </ReactMarkdown>
+    {bindings.steps.size > 0 ? <Bindings /> : null}
+    </>
   );
 }

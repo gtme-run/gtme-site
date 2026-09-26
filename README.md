@@ -35,6 +35,13 @@ stays as it is and GitHub and MCP readers see the block alone. A block
 that doesn't parse as a whole pipeline (a fragment, or one trimmed with
 `...`) gets no figure.
 
+On the same page, a step or token named in backticks in prose, a line of
+the YAML, a row of a receipt, and a box in the figure all carry the same
+`data-step` and `data-token`; hovering any of them lights the others
+(`lib/bindings.ts`, `components/Bindings.tsx`). There is no markup for
+it: it rides the docs' rule that a thing is named in backticks exactly
+as the YAML and the receipt spell it.
+
 ## Run locally
 
 ```sh
