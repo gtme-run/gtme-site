@@ -167,3 +167,27 @@ export function annotateOutput(text: string, steps: Set<string>): Line[] | null 
   }
   return any ? out : null;
 }
+
+// ---------------------------------------------------------------------------
+
+export type Split = { before: string; fence: string; after: string };
+
+/**
+ * A page about one pipeline file has exactly one whole-pipeline yaml fence
+ * at column 0. Lift it out so the page can put it in a rail: the text
+ * before, the fence itself, and the text after. Null for any other page.
+ */
+export function splitPipeline(markdown: string): Split | null {
+  let found: { start: number; end: number } | null = null;
+  for (const m of markdown.matchAll(FENCE)) {
+    if (m[1] !== "" || m[2].trim() !== "yaml" || !parsePipeline(m[3])) continue;
+    if (found) return null;
+    found = { start: m.index, end: m.index + m[0].length };
+  }
+  if (!found) return null;
+  return {
+    before: markdown.slice(0, found.start),
+    fence: markdown.slice(found.start, found.end),
+    after: markdown.slice(found.end),
+  };
+}

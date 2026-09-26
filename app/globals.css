@@ -562,3 +562,80 @@ h4[id],
   fill: var(--accent);
   font-weight: 600;
 }
+
+/* One-file pages: the pipeline (its YAML and figure) in a sticky rail on
+   wide screens while the prose scrolls. Below the breakpoint the aside
+   sits in the flow exactly where the block is in the markdown. */
+
+.docs-rail {
+  margin: 0;
+}
+
+@media (min-width: 90rem) {
+  body:has(.docs-rail) .site-header,
+  body:has(.docs-rail) .site-main,
+  body:has(.docs-rail) .site-footer {
+    max-width: calc(66ch + 78rem);
+  }
+  .docs-page-rail {
+    display: grid;
+    grid-template-columns: minmax(0, 66ch) minmax(22rem, 1fr);
+    /* Enough rows for every child; the rail spans them all. Unused rows
+       have no height and no gap. */
+    grid-template-rows: repeat(12, auto);
+    column-gap: 2.5rem;
+    row-gap: 0;
+    align-items: start;
+  }
+  .docs-page-rail > * {
+    grid-column: 1;
+    min-width: 0;
+  }
+  .docs-page-rail > .docs-rail {
+    grid-column: 2;
+    grid-row: 1 / -1;
+    position: sticky;
+    top: 1rem;
+    max-height: calc(100vh - 2rem);
+    overflow-y: auto;
+    min-width: 0;
+  }
+  .docs-rail .pipeline-block {
+    width: auto;
+    margin: 0;
+  }
+  .docs-rail .pipeline-block > pre {
+    flex-basis: 24rem;
+  }
+}
+
+/* The step the prose is on, kept lit in the rail. Same look as a hover. */
+
+.docs-page code:is(.lit, .follow) {
+  background: color-mix(in srgb, var(--accent) 16%, var(--code-bg));
+  text-decoration-color: var(--accent);
+}
+
+.docs-page .ln:is(.lit, .follow) {
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+.pipeline-figure .pf-node:is(.lit, .follow) rect {
+  stroke: var(--accent);
+  stroke-width: 1.5;
+  fill: color-mix(in srgb, var(--accent) 10%, var(--code-bg));
+}
+
+.pipeline-figure .pf-tap:is(.lit, .follow) {
+  stroke: var(--accent);
+  stroke-width: 1.5;
+}
+
+.pipeline-figure .pf-gate:is(.lit, .follow) .pf-diamond {
+  fill: color-mix(in srgb, var(--accent) 18%, var(--bg));
+}
+
+.pipeline-figure .pf-gate:is(.lit, .follow) .pf-gate-label {
+  fill: var(--accent);
+  font-weight: 600;
+}

@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import DocsMarkdown from "@/components/DocsMarkdown";
+import Bindings from "@/components/Bindings";
+import { scanBindings, splitPipeline } from "@/lib/bindings";
 import {
   getSite,
   readRepoText,
@@ -247,15 +249,42 @@ export default async function DocsPage({ params }: Props) {
   if (!r) notFound();
 
   const { title, body } = splitTitle(r.doc.content);
+  const unwritten = unwrittenRoutes(site);
+  // A page about one pipeline file keeps that file in a rail on wide
+  // screens. The aside sits between the halves of the body, so on a phone
+  // it is exactly where the block was.
+  const split = splitPipeline(body);
+  const bindings = split ? scanBindings(body) : undefined;
   return (
     <div className="docs">
-      <article className="docs-page">
+      <article className={split ? "docs-page docs-page-rail" : "docs-page"}>
         <h1>{title ?? r.doc.data.name ?? "Docs"}</h1>
         {r.doc.data.description ? (
           <p className="lede">{r.doc.data.description}</p>
         ) : null}
         <WhatYoullLearn doc={r.doc} />
-        <DocsMarkdown unwritten={unwrittenRoutes(site)}>{body}</DocsMarkdown>
+        {split ? (
+          <>
+            <div className="docs-body">
+              <DocsMarkdown unwritten={unwritten} bindings={bindings} bind={false}>
+                {split.before}
+              </DocsMarkdown>
+            </div>
+            <aside className="docs-rail" aria-label="The pipeline this page is about">
+              <DocsMarkdown unwritten={unwritten} bindings={bindings} bind={false}>
+                {split.fence}
+              </DocsMarkdown>
+            </aside>
+            <div className="docs-body">
+              <DocsMarkdown unwritten={unwritten} bindings={bindings} bind={false}>
+                {split.after}
+              </DocsMarkdown>
+            </div>
+            <Bindings follow />
+          </>
+        ) : (
+          <DocsMarkdown unwritten={unwritten}>{body}</DocsMarkdown>
+        )}
         <Related site={site} doc={r.doc} />
         <PrevNext site={site} r={r} />
       </article>
