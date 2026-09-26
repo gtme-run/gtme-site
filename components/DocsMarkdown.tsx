@@ -2,7 +2,9 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeSlug from "rehype-slug";
 import Mermaid from "./Mermaid";
+import PipelineFigure from "./PipelineFigure";
 import { assetSrc } from "@/lib/docs";
+import { parsePipeline } from "@/lib/pipeline";
 
 const REPO_BLOB = "https://github.com/gtme-run/gtme/blob/main/";
 
@@ -19,6 +21,19 @@ function toText(node?: HastNode): string {
   if (!node) return "";
   if (node.type === "text") return node.value ?? "";
   return (node.children ?? []).map(toText).join("");
+}
+
+function hasLanguage(code: HastNode | undefined, lang: string): boolean {
+  const cls = code?.properties?.className;
+  return code?.tagName === "code" && Array.isArray(cls) && cls.includes(`language-${lang}`);
+}
+
+// A short stable id for a block, so two figures on one page get distinct
+// SVG marker ids.
+function blockId(text: string): string {
+  let h = 0;
+  for (let i = 0; i < text.length; i++) h = (h * 31 + text.charCodeAt(i)) | 0;
+  return "pf" + (h >>> 0).toString(36);
 }
 
 // Docs pages link root-relative (/concepts/ledger, /spec#3-...); the site
@@ -101,13 +116,22 @@ export default function DocsMarkdown({
         h4: ({ node, ...p }) => <Heading level={4} node={node as HastNode} {...p} />,
         pre: ({ node, children }) => {
           const code = (node as HastNode | undefined)?.children?.[0];
-          const cls = code?.properties?.className;
-          if (
-            code?.tagName === "code" &&
-            Array.isArray(cls) &&
-            cls.includes("language-mermaid")
-          ) {
+          if (hasLanguage(code, "mermaid")) {
             return <Mermaid source={toText(code).replace(/\n$/, "")} />;
+          }
+          // A whole pipeline in a yaml block gets its figure beside it. The
+          // markdown is untouched; GitHub and MCP readers see the block alone.
+          if (hasLanguage(code, "yaml")) {
+            const text = toText(code);
+            const pipeline = parsePipeline(text);
+            if (pipeline) {
+              return (
+                <div className="pipeline-block">
+                  <pre>{children}</pre>
+                  <PipelineFigure pipeline={pipeline} id={blockId(text)} />
+                </div>
+              );
+            }
           }
           return <pre>{children}</pre>;
         },
