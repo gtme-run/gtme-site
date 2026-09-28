@@ -17,14 +17,11 @@ const REGISTRY_INDEX =
   process.env.GTME_REGISTRY ??
   "https://raw.githubusercontent.com/gtme-run/gtme-bindings/main/index.json";
 
-// The bindings compiled into the binary (internal/binding/register.go). Their
-// fixtures live in the gtme repo; every other built-in is a Go adapter whose
-// fixtures take a different shape and are not shown.
-export const EMBEDDED_BINDINGS: Record<string, string> = {
-  "apollo/search": "apollo-search",
-  "apollo/enrich": "apollo-enrich",
-  "attio/assert": "attio-assert",
-};
+// The bindings compiled into the binary, whose fixtures live in the gtme
+// repo. Empty since gtme M33 (ADR-059): the binary registers no binding, and
+// every vendor adapter but Instantly is a registry entry, catalogued from
+// the index. Every built-in left is a Go adapter, whose fixtures are not shown.
+export const EMBEDDED_BINDINGS: Record<string, string> = {};
 
 export type Schema = {
   type?: string;
