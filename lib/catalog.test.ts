@@ -164,8 +164,7 @@ test("usageYaml puts a source under source: and anything else under steps:", () 
   assert.equal(usageYaml(ai), "steps:\n  - id: filter\n    use: ai/filter");
 });
 
-test("built-ins point at their binding.yaml when one is embedded", () => {
-  assert.equal(connectorFromBuiltin(apolloSearch).source.label, "spec/bindings/apollo-search/binding.yaml");
+test("built-ins point at the Go adapters, since the binary embeds no binding (gtme M33)", () => {
   assert.equal(connectorFromBuiltin(apolloSearch).tier, "built-in");
   assert.equal(
     connectorFromBuiltin({ id: "csv/source", role: "source", entity_type: "person" }).source.label,
@@ -216,4 +215,29 @@ test("sortConnectors groups vendors first, then files, then steps, and byVendor 
       ["text", 1],
     ],
   );
+});
+
+test("a registry process entry installs by id and keeps its manifest (gtme ADR-063)", () => {
+  const entry = {
+    id: "instantly/add-to-campaign",
+    kind: "process",
+    role: "deliver",
+    entity_type: "person",
+    credentials: ["INSTANTLY_API_KEY"],
+    source: { url: "github.com/gtme-run/gtme", path: "cmd/gtme-instantly", ref: "v0.7.0", sha: "8c3008c" },
+    tier: "verified",
+    release: "v0.7.0",
+  };
+  const manifest = {
+    id: "instantly/add-to-campaign",
+    role: "deliver",
+    entity_type: "person",
+    config_schema: { type: "object", required: ["campaign"], properties: { campaign: { type: "string" } } },
+  };
+  const c = connectorFromEntry(entry, manifest);
+  assert.equal(c.install, "instantly/add-to-campaign");
+  assert.equal(c.process, true);
+  assert.equal(c.tier, "verified");
+  assert.equal(c.source.href, "https://github.com/gtme-run/gtme/tree/8c3008c/cmd/gtme-instantly");
+  assert.match(usageYaml(c), /campaign: CAMPAIGN/);
 });

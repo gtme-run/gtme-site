@@ -19,8 +19,9 @@ const REGISTRY_INDEX =
 
 // The bindings compiled into the binary, whose fixtures live in the gtme
 // repo. Empty since gtme M33 (ADR-059): the binary registers no binding, and
-// every vendor adapter but Instantly is a registry entry, catalogued from
-// the index. Every built-in left is a Go adapter, whose fixtures are not shown.
+// since M35 (ADR-063) every vendor adapter, Instantly included, is a registry
+// entry catalogued from the index. Every built-in left is a Go adapter, whose
+// fixtures are not shown.
 export const EMBEDDED_BINDINGS: Record<string, string> = {};
 
 export type Schema = {
@@ -82,6 +83,8 @@ export type Connector = {
   since?: string;
   /** For a registry entry: the argument `gtme adapters add` takes. */
   install?: string;
+  /** A registry process entry: a prebuilt executable, not a binding (ADR-063). */
+  process?: boolean;
 };
 
 // index.json entry (spec/schemas/registry-index.schema.json).
@@ -97,6 +100,14 @@ type IndexEntry = {
   sha256?: string;
   tier?: string;
   since?: string;
+  kind?: string;
+  release?: string;
+};
+
+// Registry process entries (ADR-063) ship no binding.yaml. Their manifest is
+// read from the gtme repo at the entry's pinned commit instead.
+export const PROCESS_MANIFESTS: Record<string, string> = {
+  "instantly/add-to-campaign": "internal/adapters/instantly/manifest.json",
 };
 
 // ---------------------------------------------------------------------------
@@ -306,7 +317,9 @@ export function connectorFromEntry(e: IndexEntry, manifest: Manifest | null): Co
       href: href ?? `https://${e.source.url.replace(/^https?:\/\//, "")}`,
     },
     since: e.since,
-    install: addRef(e.source) ?? undefined,
+    // A process entry installs by id, from its per-platform asset.
+    install: e.kind === "process" ? e.id : (addRef(e.source) ?? undefined),
+    process: e.kind === "process" || undefined,
   };
 }
 
@@ -354,6 +367,19 @@ async function loadRegistry(skip: Set<string>): Promise<Connector[]> {
   );
   return Promise.all(
     entries.map(async (e) => {
+      if (e.kind === "process") {
+        const path = PROCESS_MANIFESTS[e.id];
+        const r = parseRepo(e.source.url);
+        const at = e.source.sha || e.source.ref || "main";
+        const text = path && r ? await fetchRaw(`https://raw.githubusercontent.com/${r.owner}/${r.repo}/${at}/${path}`) : null;
+        let manifest: Manifest | null = null;
+        try {
+          manifest = text ? (JSON.parse(text) as Manifest) : null;
+        } catch {
+          manifest = null;
+        }
+        return connectorFromEntry(e, manifest);
+      }
       const bindingUrl = entryRawUrl(e.source, "binding.yaml");
       const fixturesUrl = entryRawUrl(e.source, "fixtures/conformance.json");
       const [binding, fixtures] = await Promise.all([

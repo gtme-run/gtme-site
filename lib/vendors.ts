@@ -147,6 +147,6 @@ export const BLURBS: Record<string, string> = {
   "human/filter": "A person decides pass or fail for each record, at the terminal or later with gtme answer.",
   "human/review": "A person reviews each record and answers the step's declared fields.",
   "instantly/add-to-campaign":
-    "Adds each record as a lead to an Instantly campaign, by name or id, with merge variables from the ledger. Preflight checks the campaign before an armed run, and idempotency keeps a re-run from adding anyone twice.",
+    "Adds each record as a lead to an Instantly campaign, named by its id, with merge variables from the ledger. Preflight checks the campaign and prints its name before anything sends, and idempotency keeps a re-run from adding anyone twice, even after the campaign is renamed.",
   "text/compose": "Renders one template per record into one field. No model, no key, $0.",
 };
