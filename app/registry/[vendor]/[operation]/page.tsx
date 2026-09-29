@@ -44,6 +44,7 @@ function recordsText(entity: string) {
 }
 
 function kindText(c: Connector) {
+  if (c.process) return "a process adapter from the registry, prebuilt for your platform";
   if (c.tier !== "built-in") return "a binding from the registry";
   return EMBEDDED_BINDINGS[c.id] ? "a binding compiled into the binary" : "a process adapter compiled into the binary";
 }
@@ -174,14 +175,28 @@ export default async function ConnectorPage({ params }: Props) {
       <h2 id="use">Use it</h2>
       {install ? (
         <>
-          <p>Install it from the registry. Nothing installs unverified: the fixtures run offline first.</p>
+          {c.process ? (
+            <p>
+              Install it from the registry. The command downloads the build for your platform and refuses it unless
+              its checksum matches the one the index pins.
+            </p>
+          ) : (
+            <p>Install it from the registry. Nothing installs unverified: the fixtures run offline first.</p>
+          )}
           <pre>
             <code>{`gtme adapters add ${install}`}</code>
           </pre>
-          <p>
-            The command prints the hosts the binding will call and the credentials it will ask for, then pins the
-            commit it fetched. Then, in a pipeline file:
-          </p>
+          {c.process ? (
+            <p>
+              It prints the credentials the adapter will ask for, then pins the gtme release it installed. Then, in a
+              pipeline file:
+            </p>
+          ) : (
+            <p>
+              The command prints the hosts the binding will call and the credentials it will ask for, then pins the
+              commit it fetched. Then, in a pipeline file:
+            </p>
+          )}
         </>
       ) : (
         <p>It ships inside the binary. In a pipeline file:</p>

@@ -43,7 +43,7 @@ steps:
   - id: send
     use: instantly/add-to-campaign
     with:
-      campaign: "Q3 VP Marketing"
+      campaign: 0198a0b1-2c3d-4e5f-8a9b-0c1d2e3f4a5b   # the campaign id
     variables:
       first_line: first_line
       ps_line: ps_line
@@ -57,7 +57,7 @@ reveal       apollo/enrich              5   5    -      0       -         -     
 linkedin     harvest/profile            5   5    -      0       -         -       $0.0600  -
 personalize  ai/compose                 5   5    -      0       -         -       $0.0232  -
 send         instantly/add-to-campaign  5   0    -      0       -         -       $0       -
-send: preflight ok — 3 check(s) (✓ campaign active, ✓ variable first_line referenced, ✓ variable ps_line referenced)
+send: preflight ok — campaign "Q3 VP Marketing" (0198a0b1-2c3d-4e5f-8a9b-0c1d2e3f4a5b) — 3 check(s) (✓ campaign active, ✓ variable first_line referenced, ✓ variable ps_line referenced)
 total: $0.1437 (estimated) spent`;
 
 const RE_RUN = `step         adapter                    in  out  empty  cached  filtered  failed  cost  avoided
@@ -66,8 +66,9 @@ icp-filter   ai/filter                  5   0    -      5       -         -     
 reveal       apollo/enrich              5   0    -      5       -         -       $0    $0.0500
 linkedin     harvest/profile            5   0    -      5       -         -       $0    $0.0600
 personalize  ai/compose                 5   0    -      5       -         -       $0    ?
-send         instantly/add-to-campaign  5   0    -      5       -         -       $0    $0.0000
-total: $0 (estimated) spent, $0.1100+? avoided via cache (25 records skipped)`;
+send         instantly/add-to-campaign  5   0    -      0       -         -       $0    -
+send: 5 already delivered
+total: $0 (estimated) spent, $0.1100+? avoided via cache (20 records skipped)`;
 
 export default function HomePage() {
   return (
@@ -110,9 +111,10 @@ export default function HomePage() {
         Every paid step reads <code>cached 5</code> and spends $0. The Apollo
         and Harvest rows show their dollars under <code>avoided</code>, and
         the AI rows show a <code>?</code>, which is why the total ends in{" "}
-        <code>+?</code>. The send row is cached too: the five are already in
-        the campaign, and <code>idempotency: email</code> keeps a re-run
-        from adding anyone twice.
+        <code>+?</code>. The send step reads <code>5 already delivered</code>:
+        the five are already in the campaign, and{" "}
+        <code>idempotency: email</code> keeps a re-run from adding anyone
+        twice. That isn&apos;t a saving, so it isn&apos;t counted as cached.
       </p>
 
       <h2>Install</h2>
