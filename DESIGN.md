@@ -78,6 +78,11 @@ Rules:
 - **Header:** one component for the whole site, sticky, the same width on
   every page so the nav never shifts. Brand in Space Grotesk, nav items in
   mono, the current section marked with a white pill.
+- **One site width:** the `--shell` token (80rem). The header, footer, home
+  page, docs layout, and connectors all share its edges, so `/gtme` lines up
+  with the content's left edge and the last nav link with its right edge.
+  Inside a wide card, prose stays capped at 70ch; code, tables, and figures
+  may use the full width.
 - **Footer mark:** `gtme.run` in Space Grotesk, bold, right-aligned.
 - **Eyebrows:** the section name in small uppercase mono above a page title.
 

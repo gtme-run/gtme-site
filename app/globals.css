@@ -17,6 +17,9 @@
   --shadow: 0 1px 2px rgba(17, 24, 39, 0.04), 0 1px 3px rgba(17, 24, 39, 0.06);
   --radius: 12px;
   --header-h: 3.5rem;
+  /* The one site width. The header, footer, home page, and docs layout all
+     share its edges; narrow reading pages center inside it. */
+  --shell: 80rem;
   --font-sans: var(--font-body), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial,
     sans-serif;
   --font-head: var(--font-display), var(--font-sans);
@@ -95,11 +98,12 @@ a:focus-visible {
   border-bottom: 1px solid var(--border);
 }
 
-/* Full width with fixed gutters: the page column changes width between
-   home, docs, and the rail pages, so the header does not follow it. */
+/* The header and footer sit in the shell, so their edges line up with the
+   home page and the docs layout on every page. */
 .site-header-inner,
 .site-footer-inner {
   width: 100%;
+  max-width: var(--shell);
   margin: 0 auto;
   padding: 0 1rem;
   display: flex;
@@ -151,6 +155,7 @@ a:focus-visible {
 
 .site-nav a {
   display: block;
+  white-space: nowrap;
   padding: 0.3rem 0.65rem;
   border-radius: 6px;
   color: var(--muted);
@@ -173,8 +178,9 @@ a:focus-visible {
   color: var(--muted);
 }
 
-/* The main column. Pages pick their own reading width; the header and
-   footer do not follow it. */
+/* The main column. Home and docs use the full shell; other pages keep a
+   reading width and center inside it. Its side padding matches the
+   header's, so the edges line up. */
 
 .site-main {
   flex: 1;
@@ -491,7 +497,19 @@ ol.steps > li:not(:last-child)::after {
 /* Docs: sidebar + page. The docs pages widen the main column to fit the nav. */
 
 body:has(.docs) .site-main {
-  max-width: calc(72ch + 20rem);
+  max-width: var(--shell);
+}
+
+/* The docs card fills the shell; prose keeps a reading width inside it,
+   while code, tables, and figures may use the full card. */
+.docs-page :is(p, ul, ol, blockquote, h1, h2, h3, h4, .docs-learn),
+.registry :is(p, ul, ol, blockquote, h1, h2, h3, h4) {
+  max-width: 70ch;
+}
+
+/* Connectors use the shell too, so their card lines up with the header. */
+body:has(.registry) .site-main {
+  max-width: var(--shell);
 }
 
 .docs {
@@ -882,16 +900,17 @@ h4[id],
 }
 
 @media (min-width: 90rem) {
-  body:has(.docs-rail) .site-main {
-    max-width: calc(66ch + 78rem);
+  .docs-page.docs-page-rail {
+    padding-left: 2rem;
+    padding-right: 2rem;
   }
   .docs-page-rail {
     display: grid;
-    grid-template-columns: minmax(0, 66ch) minmax(22rem, 1fr);
+    grid-template-columns: minmax(0, 1fr) minmax(20rem, 24rem);
     /* Enough rows for every child; the rail spans them all. Unused rows
        have no height and no gap. */
     grid-template-rows: repeat(12, auto);
-    column-gap: 2.5rem;
+    column-gap: 2rem;
     row-gap: 0;
     align-items: start;
   }
@@ -1092,7 +1111,7 @@ table.facts td a {
    column, and built from sections on the gray page rather than one card. */
 
 body:has(.home) .site-main {
-  max-width: 76rem;
+  max-width: var(--shell);
 }
 
 .home-hero {
@@ -1444,6 +1463,11 @@ ol.convo > li + li {
   color: var(--builder-blue);
 }
 
+/* A brand phrase never splits across lines ("Claude Code"). */
+.home-hero h1 .builder-blue {
+  white-space: nowrap;
+}
+
 /* Repo pill: the latest release and a star link, under the home lede. */
 .repo-pill {
   display: inline-flex;
@@ -1480,4 +1504,16 @@ ol.convo > li + li {
 
 .repo-pill-star span {
   color: var(--builder-blue);
+}
+
+/* The smallest phones: the nav tightens so "github" keeps its arrow. Kept
+   last so it overrides the base nav rules. */
+@media (max-width: 22rem) {
+  .site-nav {
+    gap: 0;
+    font-size: 0.74rem;
+  }
+  .site-nav a {
+    padding: 0.3rem 0.4rem;
+  }
 }
