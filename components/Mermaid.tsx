@@ -27,7 +27,12 @@ function themeVariables() {
     tertiaryColor: v("--bg"),
     lineColor: v("--muted"),
     textColor: v("--fg"),
-    fontFamily: v("--font-sans"),
+    // Edge labels sit on the card surface, not a black box in dark mode.
+    edgeLabelBackground: v("--bg"),
+    // Nodes are adapter ids and edge labels are short labels: mono, per
+    // DESIGN.md. Set here, not in CSS, so Mermaid measures the face it draws.
+    fontFamily: v("--font-mono"),
+    fontSize: "13px",
   };
 }
 

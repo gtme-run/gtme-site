@@ -166,6 +166,15 @@ export default function DocsMarkdown({
             alt={alt ?? ""}
           />
         ),
+        // Steps are numbered by a CSS counter (globals.css), which ignores
+        // the start attribute; a list that resumes at 4 starts its counter at 3.
+        ol: ({ node: _node, start, style, ...p }) => (
+          <ol
+            start={start}
+            style={typeof start === "number" && start > 1 ? { ...style, counterReset: `step ${start - 1}` } : style}
+            {...p}
+          />
+        ),
         // A table fills the column and scrolls sideways inside its own box
         // when it is wider, so every table on a page has one width.
         table: ({ node: _node, ...p }) => (
