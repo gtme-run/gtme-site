@@ -134,6 +134,19 @@ function Sidebar({ site, current }: { site: Site; current: string }) {
   );
 }
 
+// The mono label over a page's title: the section it belongs to.
+function Eyebrow({ site, r }: { site: Site; r: Resolved }) {
+  if (r.kind !== "page") return <p className="eyebrow">Docs</p>;
+  const key = r.entry.route.split("/")[0];
+  const c = site.collections.find((x) => x.key === key);
+  if (!c) return <p className="eyebrow">Docs</p>;
+  return (
+    <p className="eyebrow">
+      {c.doc ? <Link href={href(c.route)}>{c.label}</Link> : c.label}
+    </p>
+  );
+}
+
 function PrevNext({ site, r }: { site: Site; r: Resolved }) {
   if (r.kind === "root") return null;
   const key = r.kind === "collection" ? r.entry.key : r.entry.route.split("/")[0];
@@ -268,6 +281,7 @@ export default async function DocsPage({ params }: Props) {
   return (
     <div className="docs">
       <article className={split ? "docs-page docs-page-rail" : "docs-page"}>
+        <Eyebrow site={site} r={r} />
         <h1>{title ?? r.doc.data.name ?? "Docs"}</h1>
         {r.doc.data.description ? (
           <p className="lede">{r.doc.data.description}</p>
