@@ -63,7 +63,7 @@ export default async function ConnectorPage({ params }: Props) {
 
   return (
     <article className="registry connector">
-      <p className="crumbs">
+      <p className="eyebrow crumbs">
         <Link href="/registry">Connectors</Link> › <Link href={vendorHref(c.vendor)}>{v.name}</Link>
       </p>
       <h1>{connectorTitle(c)}</h1>

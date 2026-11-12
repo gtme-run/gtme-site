@@ -30,7 +30,7 @@ export default async function VendorPage({ params }: Props) {
 
   return (
     <article className="registry">
-      <p className="crumbs">
+      <p className="eyebrow crumbs">
         <Link href="/registry">Connectors</Link>
       </p>
       <h1>{v.name}</h1>
