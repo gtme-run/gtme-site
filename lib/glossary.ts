@@ -67,3 +67,19 @@ export function termForLink(
   if (!t || routeOf(href) !== t.route) return undefined;
   return shown(t, current);
 }
+
+/** A definition split on backticks: `code` spans render in mono, the rest as
+ *  text. An unmatched backtick stays literal. Definitions are frontmatter
+ *  strings, so this is the only markup they carry. */
+export function definitionParts(definition: string): { code: boolean; text: string }[] {
+  const out: { code: boolean; text: string }[] = [];
+  const re = /`([^`]+)`/g;
+  let last = 0;
+  for (let m = re.exec(definition); m; m = re.exec(definition)) {
+    if (m.index > last) out.push({ code: false, text: definition.slice(last, m.index) });
+    out.push({ code: true, text: m[1] });
+    last = m.index + m[0].length;
+  }
+  if (last < definition.length) out.push({ code: false, text: definition.slice(last) });
+  return out;
+}

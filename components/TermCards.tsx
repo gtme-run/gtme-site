@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { definitionParts } from "@/lib/glossary";
 
 // Glossary hover cards. Every term the page names in code font, or links
 // to the page that owns it, carries data-term, data-def, data-page and
@@ -64,7 +65,16 @@ export default function TermCards() {
       if (el === on) return;
       if (on) on.removeAttribute("aria-describedby");
       on = el;
-      def.textContent = el.dataset.def ?? "";
+      // Code spans in a definition render as <code>, built as nodes, never
+      // parsed as HTML.
+      def.replaceChildren(
+        ...definitionParts(el.dataset.def ?? "").map((p) => {
+          if (!p.code) return document.createTextNode(p.text);
+          const c = document.createElement("code");
+          c.textContent = p.text;
+          return c;
+        }),
+      );
       link.href = el.dataset.page ?? "#";
       link.textContent = `${el.dataset.pageLabel ?? "Read more"} →`;
       el.setAttribute("aria-describedby", card.id);
