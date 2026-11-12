@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import RepoPill from "@/components/RepoPill";
 import { getSite, type NavCollection, type NavPage, type Site } from "@/lib/docs";
 
 // The start paths and collections come from the gtme repo's docs/ at
@@ -168,7 +169,7 @@ export default async function HomePage() {
         <div className="home-hero-text">
           <p className="eyebrow">GTM orchestration for Claude Code</p>
           <h1>
-            Run outbound campaigns from Claude Code
+            Run outbound campaigns from <span className="builder-blue">Claude Code</span>
           </h1>
           <p className="lede">
             <span className="slash">/gtme</span> is a CLI and a Claude Code plugin. You describe a campaign in your
@@ -176,6 +177,7 @@ export default async function HomePage() {
             against your vendors. An append-only ledger remembers every fact,
             so a re-run pays only for what&apos;s new and nobody gets the same message twice.
           </p>
+          <RepoPill />
         </div>
 
         <div className="home-install">

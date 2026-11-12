@@ -53,9 +53,12 @@ Rules:
   surface change, not from borders.
 - **Text:** near-black slate for headings (around `#1f2937`), a lighter slate
   for secondary text (around `#4b5563`).
-- **Accent:** one saturated blue, `#2b45c4` (dark mode `#8ea0ff`), used for
-  links, step markers, eyebrows, and the current nav item. It replaced the
-  earlier green.
+- **Accent: builder blue.** The brand color is `#2b45c4`, named builder
+  blue. Its dark-mode shade is `#8ea0ff`, builder blue light. Both live in
+  the `--builder-blue` token, and `--accent` points at it. It marks links,
+  step markers, eyebrows, the current nav item, and the one phrase in the
+  home page title that names where gtme runs ("Claude Code"). It replaced
+  the earlier green.
 - **Dark mode:** keep the same structure. Dark page, slightly lighter cards,
   and the accent lifted for contrast. Every token in `:root` gets a dark
   counterpart.
@@ -87,7 +90,8 @@ Rules:
 
 ## Decisions
 
-- **Accent color:** blue, a shade deeper than the default UI blue.
+- **Accent color:** builder blue (`#2b45c4`), a shade deeper than the default
+  UI blue. Named 2026-11-12.
 - **Mono face:** JetBrains Mono. It reads better than Space Mono in long code
   blocks and in the run tables, which are the site's main exhibit.
 

@@ -10,7 +10,8 @@
   --border: #e2e5ea;
   --rule: #cfd5de;
   --code-bg: #f5f6f8;
-  --accent: #2b45c4;
+  --builder-blue: #2b45c4; /* the brand color; see DESIGN.md */
+  --accent: var(--builder-blue);
   --accent-hover: #1f36a3;
   --accent-ink: #ffffff; /* text on an accent fill */
   --shadow: 0 1px 2px rgba(17, 24, 39, 0.04), 0 1px 3px rgba(17, 24, 39, 0.06);
@@ -33,7 +34,8 @@
     --border: #262b33;
     --rule: #343a44;
     --code-bg: #1c2129;
-    --accent: #8ea0ff;
+    --builder-blue: #8ea0ff; /* builder blue, light: the dark-mode shade */
+    --accent: var(--builder-blue);
     --accent-hover: #aebbff;
     --accent-ink: #0e1014;
     --shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
@@ -1435,4 +1437,47 @@ ol.convo > li + li {
 
 .feature-cards > li::before {
   margin-right: 0.6rem;
+}
+
+/* A phrase set in the brand color, such as "Claude Code" in the home h1. */
+.builder-blue {
+  color: var(--builder-blue);
+}
+
+/* Repo pill: the latest release and a star link, under the home lede. */
+.repo-pill {
+  display: inline-flex;
+  align-items: stretch;
+  margin: 0.25rem 0 0;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg);
+  box-shadow: var(--shadow);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  overflow: hidden;
+}
+
+.repo-pill a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.85rem;
+  color: var(--fg);
+}
+
+.repo-pill a:hover,
+.repo-pill a:focus-visible {
+  color: var(--builder-blue);
+  text-decoration: none;
+}
+
+.repo-pill-tag {
+  color: var(--builder-blue) !important;
+  font-weight: 600;
+  border-right: 1px solid var(--border);
+}
+
+.repo-pill-star span {
+  color: var(--builder-blue);
 }
