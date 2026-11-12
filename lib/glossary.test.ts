@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { buildGlossary, termForCode, termForLink } from "./glossary.ts";
+import { buildGlossary, definitionParts, termForCode, termForLink } from "./glossary.ts";
 
 const entries = [
   { term: "ledger", definition: "The one append-only SQLite file.", page: "/concepts/ledger" },
@@ -51,4 +51,20 @@ test("termForLink needs the text to be the term and the target its owner page", 
   assert.equal(termForLink("ledger", "https://example.com/concepts/ledger", g), undefined);
   assert.equal(termForLink("ledger", undefined, g), undefined);
   assert.equal(termForLink("ledger", "/concepts/ledger", g, "concepts/ledger"), undefined);
+});
+
+test("definitionParts splits code spans and leaves plain text and stray backticks alone", () => {
+  assert.deepEqual(definitionParts("plain words"), [{ code: false, text: "plain words" }]);
+  assert.deepEqual(definitionParts("`gtme run` with no flag."), [
+    { code: true, text: "gtme run" },
+    { code: false, text: " with no flag." },
+  ]);
+  assert.deepEqual(definitionParts("a `x` b `y`"), [
+    { code: false, text: "a " },
+    { code: true, text: "x" },
+    { code: false, text: " b " },
+    { code: true, text: "y" },
+  ]);
+  assert.deepEqual(definitionParts("one ` stray"), [{ code: false, text: "one ` stray" }]);
+  assert.deepEqual(definitionParts(""), []);
 });
